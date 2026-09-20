@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حسابداری فروشگاه</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Tahoma,Arial,sans-serif;background:#f3f6fb;color:#172033}
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#111827,#2563eb);padding:20px}
+.login-box{width:100%;max-width:430px;background:#fff;border-radius:25px;padding:35px;box-shadow:0 25px 60px rgba(0,0,0,.3)}
+.logo{width:75px;height:75px;margin:auto;border-radius:22px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-size:35px;font-weight:bold}
+.login-box h1{text-align:center;margin-top:18px}.login-box p{text-align:center;color:#6b7280;margin:10px 0 25px}
+.input{width:100%;padding:14px;border:1px solid #d7dce5;border-radius:12px;margin-bottom:13px;font-size:15px;outline:none}
+.input:focus{border-color:#2563eb}.btn{border:0;border-radius:12px;padding:13px 18px;cursor:pointer;font-size:15px;font-weight:bold}
+.btn-primary{width:100%;background:#2563eb;color:#fff}.btn-primary:hover{background:#1d4ed8}
+.message{margin-top:15px;text-align:center;font-size:14px;color:#dc2626}
+.app{display:none;min-height:100vh}.sidebar{position:fixed;right:0;top:0;bottom:0;width:250px;background:#111827;color:#fff;padding:20px;z-index:10}
+.brand{font-size:22px;font-weight:bold;padding:15px 10px 25px}.user-card{background:#1f2937;padding:14px;border-radius:15px;margin-bottom:20px}.user-card small{color:#9ca3af}
+.menu button{width:100%;border:0;background:transparent;color:#d1d5db;text-align:right;padding:13px;border-radius:10px;cursor:pointer;margin-bottom:5px;font-size:14px}
+.menu button:hover,.menu button.active{background:#2563eb;color:#fff}.logout{margin-top:25px;width:100%;background:#dc2626!important;color:#fff!important}
+.main{margin-right:250px;padding:25px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.topbar h2{font-size:25px}
+.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 5px 20px rgba(0,0,0,.06)}.card-title{color:#6b7280;font-size:14px}.card-value{font-size:26px;font-weight:bold;margin-top:10px}
+.blue{color:#2563eb}.green{color:#16a34a}.red{color:#dc2626}.purple{color:#7c3aed}
+.panel{background:#fff;border-radius:18px;padding:20px;margin-top:20px;box-shadow:0 5px 20px rgba(0,0,0,.06)}
+.panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}th,td{padding:13px;border-bottom:1px solid #edf0f5;text-align:right;white-space:nowrap}th{color:#6b7280;font-size:13px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}label{display:block;margin-bottom:7px;font-size:14px;font-weight:bold}.form-group{margin-bottom:10px}.full{grid-column:1/-1}
+select{width:100%;padding:13px;border:1px solid #d7dce5;border-radius:12px;background:#fff}
+.btn-small{padding:8px 12px;border:0;border-radius:8px;cursor:pointer}.btn-green{background:#16a34a;color:#fff}.btn-red{background:#dc2626;color:#fff}.btn-blue{background:#2563eb;color:#fff}.btn-gray{background:#e5e7eb;color:#111827}
+.invoice-items{margin-top:20px}.total-box{margin-top:20px;padding:20px;background:#eff6ff;border-radius:15px;font-size:20px;font-weight:bold}
+@media(max-width:900px){.sidebar{width:210px}.main{margin-right:210px}.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.sidebar{position:relative;width:100%;height:auto}.main{margin-right:0}.cards{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start;gap:10px}}
+</style>
+</head>
+<body>
+
+<div id="loginPage" class="login-page">
+  <div class="login-box">
+    <div class="logo">ح</div>
+    <h1>حسابداری فروشگاه</h1>
+    <p>حساب کاربری خود را بسازید</p>
+    <input id="email" class="input" type="email" placeholder="ایمیل">
+    <input id="name" class="input" type="text" placeholder="نام شما">
+    <input id="password" class="input" type="password" placeholder="ساخت رمز عبور">
+    <button class="btn btn-primary" onclick="registerOrLogin()">ورود به حساب</button>
+    <div id="loginMessage" class="message"></div>
+  </div>
+</div>
+
+<div id="app" class="app">
+  <aside class="sidebar">
+    <div class="brand">🧾 حسابداری من</div>
+    <div class="user-card"><div id="userName">کاربر</div><small id="userEmail">email@example.com</small></div>
+    <div class="menu">
+      <button class="active" onclick="showPage('dashboard',this)">🏠 داشبورد</button>
+      <button onclick="showPage('products',this)">📦 کالاها</button>
+      <button onclick="showPage('sales',this)">🧾 فروش</button>
+      <button onclick="showPage('customers',this)">👥 مشتریان</button>
+      <button onclick="showPage('finance',this)">💰 دخل و خرج</button>
+      <button onclick="showPage('reports',this)">📊 گزارش‌ها</button>
+      <button onclick="showPage('settings',this)">⚙️ تنظیمات</button>
+      <button class="logout" onclick="logout()">🚪 خروج از حساب</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar"><h2 id="pageTitle">داشبورد</h2><span id="dateText"></span></div>
+
+    <section id="dashboard" class="page active">
+      <div class="cards">
+        <div class="card"><div class="card-title">تعداد کالاها</div><div id="productCount" class="card-value blue">0</div></div>
+        <div class="card"><div class="card-title">موجودی کالا</div><div id="stockCount" class="card-value purple">0</div></div>
+        <div class="card"><div class="card-title">فروش کل</div><div id="salesTotal" class="card-value green">0 تومان</div></div>
+        <div class="card"><div class="card-title">سود تقریبی</div><div id="profitTotal" class="card-value blue">0 تومان</div></div>
+      </div>
+      <div class="panel"><div class="panel-header"><h3>آخرین فروش‌ها</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>شماره</th><th>مشتری</th><th>مبلغ</th><th>تاریخ</th></tr></thead><tbody id="recentSales"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="products" class="page">
+      <div class="panel"><div class="panel-header"><h3>افزودن کالا</h3></div>
+        <div class="form-grid">
+          <div class="form-group"><label>نام کالا</label><input id="productName" class="input" placeholder="مثلاً نوشابه"></div>
+          <div class="form-group"><label>بارکد</label><input id="productBarcode" class="input" placeholder="بارکد کالا"></div>
+          <div class="form-group"><label>قیمت خرید</label><input id="buyPrice" class="input" type="number" placeholder="تومان"></div>
+          <div class="form-group"><label>قیمت فروش</label><input id="sellPrice" class="input" type="number" placeholder="تومان"></div>
+          <div class="form-group"><label>موجودی</label><input id="productStock" class="input" type="number" placeholder="تعداد"></div>
+          <div class="form-group"><label>دسته‌بندی</label><input id="productCategory" class="input" placeholder="مثلاً خوراکی"></div>
+          <div class="full"><button class="btn btn-blue" onclick="addProduct()">➕ افزودن کالا</button></div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-header"><h3>لیست کالاها</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>نام</th><th>بارکد</th><th>خرید</th><th>فروش</th><th>موجودی</th><th>دسته</th><th>عملیات</th></tr></thead><tbody id="productsTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="sales" class="page">
+      <div class="panel"><div class="panel-header"><h3>ثبت فروش جدید</h3></div>
+        <div class="form-grid">
+          <div class="form-group"><label>مشتری</label><input id="saleCustomer" class="input" placeholder="نام مشتری"></div>
+          <div class="form-group"><label>بارکد کالا</label><input id="saleBarcode" class="input" placeholder="بارکد را اسکن یا وارد کنید" onkeydown="barcodeSale(event)"></div>
+          <div class="form-group"><label>تعداد</label><input id="saleQuantity" class="input" type="number" value="1" min="1"></div>
+          <div class="form-group"><label>کالا</label><select id="saleProduct"></select></div>
+          <div class="full"><button class="btn btn-blue" onclick="addSaleItem()">➕ افزودن به فاکتور</button></div>
+        </div>
+        <div class="invoice-items"><table><thead><tr><th>کالا</th><th>تعداد</th><th>قیمت</th><th>جمع</th><th>حذف</th></tr></thead><tbody id="invoiceTable"></tbody></table></div>
+        <div class="total-box">مبلغ فاکتور: <span id="invoiceTotal">0</span> تومان</div><br>
+        <button class="btn btn-green" onclick="completeSale()">✅ ثبت فروش</button>
+      </div>
+    </section>
+
+    <section id="customers" class="page">
+      <div class="panel"><h3>افزودن مشتری</h3><br><div class="form-grid">
+        <div><label>نام</label><input id="customerName" class="input"></div>
+        <div><label>شماره تماس</label><input id="customerPhone" class="input"></div>
+        <div class="full"><button class="btn btn-blue" onclick="addCustomer()">➕ افزودن مشتری</button></div>
+      </div></div>
+      <div class="panel"><h3>مشتریان</h3><br><table><thead><tr><th>نام</th><th>شماره تماس</th><th>عملیات</th></tr></thead><tbody id="customersTable"></tbody></table></div>
+    </section>
+
+    <section id="finance" class="page">
+      <div class="panel"><h3>ثبت دخل و خرج</h3><br><div class="form-grid">
+        <div><label>نوع</label><select id="financeType"><option value="income">درآمد</option><option value="expense">هزینه</option></select></div>
+        <div><label>مبلغ</label><input id="financeAmount" class="input" type="number"></div>
+        <div class="full"><label>توضیحات</label><input id="financeDescription" class="input"></div>
+        <div class="full"><button class="btn btn-blue" onclick="addFinance()">ثبت</button></div>
+      </div></div>
+      <div class="panel"><h3>تراکنش‌ها</h3><br><table><thead><tr><th>نوع</th><th>مبلغ</th><th>توضیحات</th><th>تاریخ</th></tr></thead><tbody id="financeTable"></tbody></table></div>
+    </section>
+
+    <section id="reports" class="page">
+      <div class="cards">
+        <div class="card"><div class="card-title">کل درآمد</div><div id="reportIncome" class="card-value green">0</div></div>
+        <div class="card"><div class="card-title">کل هزینه</div><div id="reportExpense" class="card-value red">0</div></div>
+        <div class="card"><div class="card-title">فروش</div><div id="reportSales" class="card-value blue">0</div></div>
+      </div>
+    </section>
+
+    <section id="settings" class="page">
+      <div class="panel"><h3>اطلاعات حساب</h3><br>
+        <p>نام: <strong id="settingName"></strong></p><br>
+        <p>ایمیل: <strong id="settingEmail"></strong></p><br>
+        <button class="btn btn-red" onclick="logout()">خروج از حساب</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+let products=JSON.parse(localStorage.getItem("products"))||[];
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+let sales=JSON.parse(localStorage.getItem("sales"))||[];
+let finance=JSON.parse(localStorage.getItem("finance"))||[];
+let invoiceItems=[];
+
+function registerOrLogin(){
+  const email=document.getElementById("email").value.trim();
+  const name=document.getElementById("name").value.trim();
+  const password=document.getElementById("password").value;
+  const message=document.getElementById("loginMessage");
+  if(!email||!email.includes("@")){message.textContent="لطفاً یک ایمیل معتبر وارد کنید.";return}
+  if(!name){message.textContent="لطفاً نام خود را وارد کنید.";return}
+  if(password.length<4){message.textContent="رمز عبور باید حداقل ۴ کاراکتر باشد.";return}
+  localStorage.setItem("account",JSON.stringify({email,name,password}));
+  localStorage.setItem("loggedIn","true");
+  openApp();
+}
+function openApp(){
+  const account=JSON.parse(localStorage.getItem("account"));
+  if(!account)return;
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("app").style.display="block";
+  userName.textContent=account.name;userEmail.textContent=account.email;
+  settingName.textContent=account.name;settingEmail.textContent=account.email;
+  updateDashboard();renderProducts();renderCustomers();renderFinance();updateReports();updateProductSelect();updateDate();
+}
+function logout(){localStorage.setItem("loggedIn","false");document.getElementById("app").style.display="none";document.getElementById("loginPage").style.display="flex";document.getElementById("password").value=""}
+window.addEventListener("load",()=>{if(localStorage.getItem("account")&&localStorage.getItem("loggedIn")==="true")openApp()});
+function showPage(page,button){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
+  document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+  const titles={dashboard:"داشبورد",products:"کالاها",sales:"فروش",customers:"مشتریان",finance:"دخل و خرج",reports:"گزارش‌ها",settings:"تنظیمات"};
+  document.getElementById("pageTitle").textContent=titles[page];
+}
+function addProduct(){
+  const p={id:Date.now(),name:productName.value.trim(),barcode:productBarcode.value.trim(),buy:Number(buyPrice.value)||0,sell:Number(sellPrice.value)||0,stock:Number(productStock.value)||0,category:productCategory.value.trim()};
+  if(!p.name){alert("نام کالا را وارد کنید.");return}
+  products.push(p);saveData();
+  ["productName","productBarcode","buyPrice","sellPrice","productStock","productCategory"].forEach(id=>document.getElementById(id).value="");
+  renderProducts();updateProductSelect();updateDashboard();
+}
+function renderProducts(){
+  productsTable.innerHTML="";
+  products.forEach(p=>productsTable.innerHTML+=`<tr><td>${escapeHTML(p.name)}</td><td>${escapeHTML(p.barcode)}</td><td>${formatMoney(p.buy)}</td><td>${formatMoney(p.sell)}</td><td>${p.stock}</td><td>${escapeHTML(p.category)}</td><td><button class="btn-small btn-red" onclick="deleteProduct(${p.id})">حذف</button></td></tr>`);
+}
+function deleteProduct(id){if(!confirm("این کالا حذف شود؟"))return;products=products.filter(p=>p.id!==id);saveData();renderProducts();updateProductSelect();updateDashboard()}
+function updateProductSelect(){saleProduct.innerHTML="";products.forEach(p=>saleProduct.innerHTML+=`<option value="${p.id}">${escapeHTML(p.name)} - ${formatMoney(p.sell)} تومان</option>`)}
+function addSaleItem(){
+  const product=products.find(p=>p.id===Number(saleProduct.value));
+  const quantity=Number(saleQuantity.value)||1;
+  if(!product){alert("ابتدا کالا اضافه کنید.");return}
+  if(quantity<=0){alert("تعداد معتبر نیست.");return}
+  if(product.stock<quantity){alert("موجودی این کالا کافی نیست.");return}
+  invoiceItems.push({productId:product.id,name:product.name,quantity,price:product.sell});renderInvoice();
+}
+function renderInvoice(){
+  invoiceTable.innerHTML="";let total=0;
+  invoiceItems.forEach((item,index)=>{const sum=item.quantity*item.price;total+=sum;invoiceTable.innerHTML+=`<tr><td>${escapeHTML(item.name)}</td><td>${item.quantity}</td><td>${formatMoney(item.price)}</td><td>${formatMoney(sum)}</td><td><button class="btn-small btn-red" onclick="removeInvoiceItem(${index})">حذف</button></td></tr>`});
+  invoiceTotal.textContent=formatMoney(total);
+}
+function removeInvoiceItem(index){invoiceItems.splice(index,1);renderInvoice()}
+function completeSale(){
+  if(!invoiceItems.length){alert("فاکتور خالی است.");return}
+  const customer=saleCustomer.value.trim()||"مشتری متفرقه";let total=0,profit=0;
+  invoiceItems.forEach(item=>{const p=products.find(x=>x.id===item.productId);if(p){p.stock-=item.quantity;total+=item.quantity*p.sell;profit+=item.quantity*(p.sell-p.buy)}});
+  const sale={id:Date.now(),number:"INV-"+Date.now(),customer,total,profit,date:new Date().toLocaleString("fa-IR")};
+  sales.push(sale);finance.push({id:Date.now()+1,type:"income",amount:total,description:"فروش شماره "+sale.number,date:new Date().toLocaleString("fa-IR")});
+  invoiceItems=[];saveData();renderInvoice();renderProducts();renderFinance();updateDashboard();updateReports();saleCustomer.value="";alert("فروش با موفقیت ثبت شد ✅");
+}
+function barcodeSale(event){if(event.key!=="Enter")return;const barcode=saleBarcode.value.trim();const p=products.find(x=>x.barcode===barcode);if(p){saleProduct.value=p.id;addSaleItem();saleBarcode.value=""}else alert("کالایی با این بارکد پیدا نشد.")}
+function addCustomer(){const name=customerName.value.trim(),phone=customerPhone.value.trim();if(!name){alert("نام مشتری را وارد کنید.");return}customers.push({id:Date.now(),name,phone});saveData();customerName.value="";customerPhone.value="";renderCustomers()}
+function renderCustomers(){customersTable.innerHTML="";customers.forEach(c=>customersTable.innerHTML+=`<tr><td>${escapeHTML(c.name)}</td><td>${escapeHTML(c.phone)}</td><td><button class="btn-small btn-red" onclick="deleteCustomer(${c.id})">حذف</button></td></tr>`)}
+function deleteCustomer(id){customers=customers.filter(c=>c.id!==id);saveData();renderCustomers()}
+function addFinance(){const type=financeType.value,amount=Number(financeAmount.value)||0,description=financeDescription.value.trim();if(amount<=0){alert("مبلغ را وارد کنید.");return}finance.push({id:Date.now(),type,amount,description,date:new Date().toLocaleString("fa-IR")});saveData();financeAmount.value="";financeDescription.value="";renderFinance();updateReports();updateDashboard()}
+function renderFinance(){financeTable.innerHTML="";finance.slice().reverse().forEach(f=>financeTable.innerHTML+=`<tr><td>${f.type==="income"?"درآمد":"هزینه"}</td><td>${formatMoney(f.amount)} تومان</td><td>${escapeHTML(f.description)}</td><td>${f.date}</td></tr>`)}
+function updateDashboard(){
+  const stock=products.reduce((s,p)=>s+Number(p.stock),0),salesTotal=sales.reduce((s,x)=>s+x.total,0),profit=sales.reduce((s,x)=>s+x.profit,0);
+  productCount.textContent=products.length;stockCount.textContent=stock;salesTotalEl=salesTotal;
+  document.getElementById("salesTotal").textContent=formatMoney(salesTotal)+" تومان";document.getElementById("profitTotal").textContent=formatMoney(profit)+" تومان";
+  recentSales.innerHTML="";sales.slice(-8).reverse().forEach(s=>recentSales.innerHTML+=`<tr><td>${s.number}</td><td>${escapeHTML(s.customer)}</td><td>${formatMoney(s.total)} تومان</td><td>${s.date}</td></tr>`);
+}
+function updateReports(){const income=finance.filter(f=>f.type==="income").reduce((s,f)=>s+f.amount,0),expense=finance.filter(f=>f.type==="expense").reduce((s,f)=>s+f.amount,0),st=sales.reduce((s,x)=>s+x.total,0);reportIncome.textContent=formatMoney(income)+" تومان";reportExpense.textContent=formatMoney(expense)+" تومان";reportSales.textContent=formatMoney(st)+" تومان"}
+function saveData(){localStorage.setItem("products",JSON.stringify(products));localStorage.setItem("customers",JSON.stringify(customers));localStorage.setItem("sales",JSON.stringify(sales));localStorage.setItem("finance",JSON.stringify(finance))}
+function formatMoney(n){return Number(n||0).toLocaleString("fa-IR")}
+function escapeHTML(t){return String(t??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function updateDate(){dateText.textContent=new Date().toLocaleDateString("fa-IR")}
+</script>
+</body>
+</html>

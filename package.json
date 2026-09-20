@@ -1,0 +1,26 @@
+{
+  "name": "hesab-chi",
+  "version": "1.0.0",
+  "description": "نرم افزار حسابداری فروشگاه حساب چی",
+  "main": "main.js",
+  "author": "Radin",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^38.1.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.radin.hesabchi",
+    "productName": "حساب چی",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
